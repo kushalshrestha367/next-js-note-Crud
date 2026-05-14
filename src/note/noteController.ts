@@ -29,4 +29,46 @@ const createNote = async (req:Request, res:Response, next: NextFunction) => {
   }
 }
 
-export {createNote}
+const listNotes = async(req:Request, res:Response, next: NextFunction) => {
+  try {
+    const notes = await NoteModel.find();
+    res.status(200).json({
+        message: "Notes retrieved successfully",
+        data: notes
+    })
+  } catch (error) {
+    return next(createHttpError(500, "Failed to retrieve notes"));
+  }
+}
+const singleNote = async(req:Request, res:Response, next: NextFunction) => {
+  try {
+    const {id} = req.params;
+    const note = await NoteModel.findById(id);
+    if(!note){
+        res.status(404).json({
+            message: "Note not found"
+        })
+        return;
+    }
+    res.status(200).json({
+        message: "Note retrieved successfully",
+        data: note
+    })
+  } catch (error) {
+    return next(createHttpError(500, "Failed to retrieve note"));
+  }
+}
+
+const deleteNote = async(req:Request, res:Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    await NoteModel.findByIdAndDelete(id);
+    res.status(200).json({
+        message: "Note deleted successfully"
+    })
+  } catch (error) {
+    return next(createHttpError(500, "Failed to delete note"));
+  }
+}
+
+export {createNote, listNotes, deleteNote, singleNote};
