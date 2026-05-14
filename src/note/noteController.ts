@@ -32,6 +32,9 @@ const createNote = async (req:Request, res:Response, next: NextFunction) => {
 const listNotes = async(req:Request, res:Response, next: NextFunction) => {
   try {
     const notes = await NoteModel.find();
+    if(!notes){
+       return next(createHttpError(404, "No notes found"));
+    }
     res.status(200).json({
         message: "Notes retrieved successfully",
         data: notes
